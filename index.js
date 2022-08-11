@@ -62,23 +62,21 @@ app.get('/callback', (req, res) => {
     }),
     headers: {
       'content-type': 'application/x-www-form-urlencoded',
-      Authorization: `Basic ${new Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString('base64')}`,
+      Authorization: `Basic ${new Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString('base64')}`
     },
   })
     .then(response => {//client uses access token to request data from Spotify
       if (response.status === 200) {
         const { access_token, token_type } = response.data;
+        const { refresh_token } = response.data;
 
-        axios.get('https://api.spotify.com/v1/me', {
-          headers: {
-            Authorization: `${token_type} ${access_token}`
-          }
-        })
-          .then(response => {
+        axios.get(`http://localhost:8888/refresh_token?refresh_token=${refresh_token}`)
+          .then((response) => {
             res.send(`<pre>${JSON.stringify(response.data, null, 2)}</pre>`);
           })
-          .catch(error => {
+          .catch((error) => {
             res.send(error);
+            //console.log(error.message);
           });
       } else {
         res.send(response);
@@ -86,6 +84,7 @@ app.get('/callback', (req, res) => {
     })
     .catch(error => {
       res.send(error);
+      //console.log(error.message);
     });
 });
 
@@ -95,16 +94,14 @@ app.get('/refresh_token', (req, res) => {
 
   axios({
     method: 'post',
-    url: 'http://accounts.spotify/api/token',
+    url: 'https://accounts.spotify.com/api/token',
     data: querystring.stringify({
       grant_type: 'refresh_token',
       refresh_token: refresh_token
     }),
     headers: {
       'content-type': 'application/x-www-form-urlencoded',
-      Authorization: `Basic ${new Buffer.from(
-        `${CLIENT_ID}:${CLIENT_SECRET}`
-      ).toString('base64')}`
+      Authorization: `Basic ${new Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString('base64')}`,
     }
   })
     .then((response) => {
@@ -112,6 +109,7 @@ app.get('/refresh_token', (req, res) => {
     })
     .catch((error) => {
       res.send(error);
+      console.log(error.response);
     });
 });
 

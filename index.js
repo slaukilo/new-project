@@ -67,19 +67,12 @@ app.get('/callback', (req, res) => {
   })
     .then(response => {//client uses access token to request data from Spotify
       if (response.status === 200) {
-        const { access_token, token_type } = response.data;
-        const { refresh_token } = response.data;
+        const { access_token, refresh_token } = response.data;
+        const queryParams = querystring.stringify({access_token, refresh_token,});
 
-        axios.get(`http://localhost:8888/refresh_token?refresh_token=${refresh_token}`)
-          .then((response) => {
-            res.send(`<pre>${JSON.stringify(response.data, null, 2)}</pre>`);
-          })
-          .catch((error) => {
-            res.send(error);
-            //console.log(error.message);
-          });
+        res.redirect(`http://localhost:3000/?${queryParams}`);//once usr authorized and logged in, redirect to React app
       } else {
-        res.send(response);
+        res.redirect(`/?${querystring.stringify({ error: 'invalid_token'})}`);
       }
     })
     .catch(error => {
@@ -112,35 +105,6 @@ app.get('/refresh_token', (req, res) => {
       console.log(error.response);
     });
 });
-
-/*
-//callback route handler
-app.get('/callback', (req, res) => {
-  const code = req.query.code || null;
-  axios.post('https://accounts.spotify.com/api/token', {
-    data: querystring.stringify({
-      grant_type: 'authorizaton_code',
-      code: code,
-      redirect_uri: REDIRECT_URI
-  })}, {
-    headers: {
-      'content-type': 'application/x-www-form-urlencoded',
-      Authorization: `Basic ${new Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString('base64')}`
-    }
-  })
-  .then((response) => {
-    if (response.status === 200) {
-      res.send(`<pre>${JSON.stringify(response.data, null, 2)}</pre>`);
-    } else {
-      res.send(response);
-    }
-  })
-  .catch((error) => {
-    res.send(error);
-    console.log(error.response);
-  })
-});
-*/
 
 //connection listener
 app.listen(port, () => {

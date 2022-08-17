@@ -1,6 +1,7 @@
 import './App.css';
 import { useState, useEffect } from 'react';
 import { accessToken, logout, getCurrentUserProfile } from './spotify';
+import { catchErrors } from './util';
 
 function App() {
   const [token, setToken] = useState(null);

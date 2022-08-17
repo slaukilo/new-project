@@ -10,15 +10,11 @@ function App() {
     setToken(accessToken);
     // Fetch user profile data with Promise
     const fetchData = async () => {
-      try {
-        const { data } = await getCurrentUserProfile();
-        setProfile(data);
-      } catch (e) {
-        console.error(e);
-      }
+      const { data } = await getCurrentUserProfile();
+      setProfile(data);
     };
 
-    fetchData();
+    catchErrors(fetchData());
   }, []);
 
   return (

@@ -1,5 +1,6 @@
-#Spotify API Boilerplate
-![image](C:\Users\slauk\OneDrive\Pictures\spotify.PNG)
+# Spotify API Boilerplate
+
+![alt text](C:\Users\slauk\OneDrive\Pictures\spotify.PNG)
 ## **Features**
 - Utilizes Node/express
 - React based
